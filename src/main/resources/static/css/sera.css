@@ -1,0 +1,210 @@
+body{
+    background-color: #f5f7f9;
+}
+
+.sera-a{
+    position:absolute;
+    left:20px;
+    margin-top: 12px;
+}
+
+.sera-button{
+    position: absolute;
+    right: 0px;
+}
+
+.sera-login{
+    margin-top: 170px;
+    border: 1px solid #ccc;
+    padding: 15px 25px 5px 2px;
+    width: 350px;
+}
+
+.sera-title{
+    margin-bottom: 15px;
+}
+
+/* index页面宽度，并设置居中 */
+
+.sera-content{
+    width: 960px;
+    margin: 0 auto;
+}
+
+/*----sidebar左边栏---- */
+
+/* 站点图片(一行文字) */
+
+.site-logo{
+    text-align: center;
+    height: 70px;
+    line-height: 70px;
+}
+
+.site-logo a{
+    color: gainsboro;
+}
+
+/* sidebar的链接栏 */
+
+.links{
+    background-color: #fff;
+    height: 160px;
+    padding-top: 20px;
+}
+
+.links ul{
+    height: 180px;
+    padding-left: 0;
+    text-align: center;
+}
+
+.links ul li{
+    line-height: 36px;
+    font-size: 90%;
+}
+
+.links ul li:hover{
+    cursor: pointer;
+    background-color: #f9f9f9;
+}
+
+.links ul li i{
+    position:absolute;
+    left: 30px;
+}
+
+.links ul li span{
+}
+
+/* 顶部黑线 */
+
+.headband{
+    height: 3px;
+    background-color: #222;
+}
+
+/* 作者栏 */
+
+.author{
+    background-color: #fff;
+    margin-top: 20px;
+}
+
+.author_avatar{
+    text-align: center;
+}
+
+.author_avatar img{
+    margin-top: 20px;
+    max-width: 120px;
+    height: auto;
+}
+
+.author_name{
+    text-align: center;
+    padding: 15px 10px 0px 10px;
+    font-weight: 600;
+    color: #222;
+}
+
+.author_signature p{
+    text-align: center;
+    padding: 15px 30px 30px 30px;
+    color: #999;
+    line-height: 2;
+    font-size: 90%;
+}
+
+/* 右边栏，日记列表 */
+
+.right-side{
+    padding: 40px;
+    min-height: 150px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.right-side-ul{
+    padding-top: 40px;
+    display: block;
+    color: #555;
+}
+
+.site-archieves{
+    height: 40px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.site-archieves .daily-state span{
+    margin-right: 10px;
+}
+
+.site-archieves .daily-state span:hover{
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.daily-state i{
+    position: absolute;
+    margin-top: 2px;
+    left: 30px;
+}
+
+#write-daily .layui-form-item label{
+    margin-left: -30px;
+}
+
+#write-daily .layui-form-item .layui-input-block{
+    margin: 0 auto;
+}
+
+/* right-side所有日记主体 */
+
+/* 日记标题的css */
+.layui-timeline-title{
+    line-height: 1.2;
+    color: #555;
+    font-weight: 400;
+}
+
+/* 日记时间的css */
+.post-time{
+    font-size: 12px;
+    color: #999;
+}
+
+.post-time i{
+    font-size: 12px;
+}
+
+.read-post-btn{
+    display: inline-block;
+    padding: 2px 10px 2px 15px;
+    font-size: 14px;
+    background-color: #fff;
+    color: #555;
+    border: 2px solid #555;
+    border-radius: 2px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    transition-delay: 0s;
+    line-height: 1.5;
+}
+
+.read-post-btn:hover{
+    cursor: pointer;
+    color: #fff;
+    background-color: #555;
+}
+
+
+/* 修改用户头像缩略图 */
+
+.show-pic{
+    position: absolute;
+    left: 400px;
+    bottom: 200px;
+}

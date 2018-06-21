@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>test</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <script th:src="@{/layui/layui.js}"></script>
+</head>
+<body>
+
+<div id="test-editormd-view">
+    <textarea style="display:none;" th:text="${daily.getHtmlcontent()}" name="test-editormd-markdown-doc"></textarea>
+</div>
+
+
+<script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+<script src="/markdown/lib/marked.min.js"></script>
+<script src="/markdown/lib/prettify.min.js"></script>
+<script src="/markdown/lib/raphael.min.js"></script>
+<script src="/markdown/lib/underscore.min.js"></script>
+<script src="/markdown/lib/sequence-diagram.min.js"></script>
+<script src="/markdown/lib/flowchart.min.js"></script>
+<script src="/markdown/lib/jquery.flowchart.min.js"></script>
+<script src="/markdown/editormd.js"></script>
+<script type="text/javascript">
+    testEditormdView2 = editormd.markdownToHTML("test-editormd-view",{
+        htmlDecode : "style,script,iframe",
+        taskList    :true,
+        tex :true,
+        flowChart   : true,
+        sequenceDiagram :true,
+    });
+</script>
+
+</body>
+</html>

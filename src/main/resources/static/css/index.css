@@ -1,0 +1,28 @@
+/* index.html 的css */
+
+body{
+    font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    line-height: 2;
+    color: #555;
+}
+
+.index-main{
+    position: relative;
+    width: 960px;
+    padding-bottom: 150px;
+    margin: 0px auto;
+}
+
+.left-side{
+    position: absolute;
+    margin: 0px auto;
+    top: 0;
+    overflow: hidden;
+    width: 240px;
+    background: #fff;
+}
+
+.site-logo{
+    position: relative;
+}

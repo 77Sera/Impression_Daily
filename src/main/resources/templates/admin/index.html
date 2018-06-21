@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>日记管理 - 印象日记</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/css/sera.css}"/>
+    <link rel="stylesheet" th:href="@{/markdown/css/editormd.min.css}"/>
+    <script th:src="@{/layui/layui.js}"></script>
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <a th:href="@{/admin/index}"><div class="layui-logo"><i class="layui-icon layui-icon-template-1"> </i> 印象日记</div></a>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img style="max-width:60px;" th:src="${user.getAvatarpath()}" class="layui-nav-img"/>
+                    <span th:text="${user.getNickname()}">用户昵称</span>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a th:href="@{/admin/index(op=2)}">用户资料</a></dd>
+                    <dd><a th:href="@{/admin/index(cp=1)}">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a th:href="@{/exit}">退出登录</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree layui-anim layui-anim-upbit"  lay-filter="test">
+                <li class="layui-nav-item">
+                    <a class="" th:href="@{/admin/index(op=0)}">所有日记</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" th:href="@{/admin/index(op=1)}">书写日记</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" th:href="@{/admin/index(op=2)}">用户设置</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" th:href="@{/index}">返回首页</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;" id="admin-content" class="layui-anim layui-anim-up"></div>
+    </div>
+
+<!--   <div class="layui-footer">
+        &lt;!&ndash; 底部固定区域 &ndash;&gt;
+        © layui.com - 底部固定区域
+    </div>-->
+</div>
+
+
+
+<div style="display:none">
+    <!-- 所有日记块的主体页面 -->
+    <div id="all-daily">
+        <!--所有日记页面-->
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <div class="layui-input-inline">
+                    <input type="radio" name="crud" value="/admin/deleteDaily" title="删除" />
+                    <input type="radio" name="crud" value="/admin/editDaily" title="编辑" />
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn" lay-submit="" lay-filter="form-crud">确认</button>
+                </div>
+            </div>
+            <table class="layui-table">
+                <colgroup>
+                    <col width="10"/>
+                    <col width="30"/>
+                    <col width="300"/>
+                    <col width="50"/>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th style="text-align:center;"></th>
+                        <th>id</th>
+                        <th>标题</th>
+                        <th>时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr th:each="daily,iterState : ${dailys}">
+                            <!--<td th:text="${daily.getId()}">id</td>-->
+                            <td><div class="layui-form-item" style="margin-left:33%;margin-top:5px;">
+                                <input type="checkbox" th:name="${daily.getId()}" lay-skin="primary"/>
+                            </div></td>
+                            <td th:text="${iterState.count}">id</td>
+                            <td th:text="${daily.getTitle()}">title</td>
+                            <td th:text="${daily.getTime()}">time</td>
+                        </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <!-- 书写日记块的主体页面  -->
+    <div id="write-daily">
+        <form class="layui-form" th:action="@{/admin/saveDaily}" method="POST">
+            <div class="layui-form-item">
+                <label class="layui-form-label">日记标题</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" required="" lay-verify="required" type="text" style="width:400px;" th:value="${daily==null?null:daily.getTitle()}" name="title" placeholder="点此输入标题..." autocomplete="off"/>
+                </div>
+                <div class="layui-input-block" style="margin-left: 500px;">
+                    <button class="layui-btn"  lay-submit="" lay-filter="form-daily">保存日记</button>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="layui-form-item">
+                <div id="daily-editormd">
+                    <textarea class="editormd-markdown-textarea" name="content"></textarea>
+                    <!-- 第二个隐藏文本域，用来构造生成的HTML代码，方便表单POST提交，这里的name可以任意取，后台接受时以这个name键为准 -->
+                    <textarea class="editormd-html-textarea" name="htmlcontent"></textarea>
+                </div>
+            </div>
+
+            <input style="display:none;" name="id" th:value="${daily==null?null:daily.getId()}"/>
+            <input style="display:none;" id="daily_time" name="time" th:value="${daily==null?'':daily.getTime()}"/>
+            <input style="display:none;" name="userid" th:value="${user.getId()}" />
+
+            <hr/>
+
+        </form>
+    </div>
+
+    <!-- 用户设置块的主体页面 -->
+    <div id="settings-content">
+        <form class="layui-form" th:action="@{/admin/saveUserSettings}" method="POST">
+
+            <div class="layui-form-mid layui-word-aux">个人信息</div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input disabled="" class="layui-input" type="text" name="username" th:value="${user.getUsername()}" autocomplete="off"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">昵称</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" type="text" name="nickname" th:value="${user.getNickname()==null?null:user.getNickname()}" th:placeholder="${user.getNickname()==null?'昵称':user.getNickname()}" autocomplete="off"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="男" title="男" th:checked="${user.getSex()==null?true:(user.getSex()=='男'?true:false)}" />
+                    <input type="radio" name="sex" value="女" title="女" th:checked="${user.getSex()==null?false:(user.getSex()=='女'?true:false)}" />
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="layui-form-mid layui-word-aux">站点信息</div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">我的日记</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" type="text" name="dailyname" th:value="${user.getDailyname()==null?null:user.getDailyname()}" th:placeholder="${user.getDailyname()==null?'日记名称':user.getDailyname()}" autocomplete="off"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户头像</label>
+                <div class="layui-input-inline div-select">
+                    <select id="avatar-select" lay-filter="avatar" name="avatarpath" lay-verify="required">
+                        <option value="/images/default.png">默认头像</option>
+                        <option value="/images/default_boy1.png">boy1</option>
+                        <option value="/images/default_boy2.png">boy2</option>
+                        <option value="/images/default_boy3.png">boy3</option>
+                        <option value="/images/default_girl1.png">girl1</option>
+                        <option value="/images/default_girl2.png">girl2</option>
+                        <option value="/images/default_girl3.png">girl3</option>
+                        <option value="/images/default_girl4.png">girl4</option>
+                        <option th:selected="${user.getAvatarpath()==null?false:true}" th:value="${user.getAvatarpath()}">当前头像</option>
+                    </select>
+                </div>
+                <div class="show-pic">
+                    <img th:src="${user.getAvatarpath()}" style="max-width: 120px;float:left;"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">用户签名</label>
+                <div class="layui-input-block">
+                    <textarea name="signature" th:text="${user.getSignature()==null?null:user.getSignature()}" th:placeholder="${user.getSignature()==null?'这个人很懒，什么都没有写...':user.getSignature()}" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="form-information">保存</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- 修改密码块的主体页面 -->
+    <div id="modify-password">
+        <form class="layui-form" th:action="@{/admin/modifyPassword}" method="POST">
+            <div class="layui-form-mid layui-word-aux">修改密码</div><hr/>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">旧密码</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" type="password" id="input_pwd" name="input_pwd" placeholder="请输入旧密码" required="" lay-verify="required" autocomplete="off"/>
+                    <input style="display:none;" disabled="" id="old_pwd" class="layui-input" type="password" name="old_pwd" th:value="${user.getPassword()}" autocomplete="off"/>
+                </div>
+            </div>
+            <br/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">新密码</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" type="password" id="new_pwd" name="new_pwd" required="" lay-verify="required" placeholder="请输入新密码" autocomplete="off"/>
+                </div>
+            </div>
+            <br/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">确认密码</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" type="password" id="new_pwd2" name="new_pwd2" required="" lay-verify="required" placeholder="请确认密码" autocomplete="off"/>
+                </div>
+            </div><br/>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="form-password">确认</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script th:src="@{/markdown/jquery.min.js}"></script>
+<script th:src="@{/markdown/editormd.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    //<![CDATA[
+    //JavaScript代码区域
+
+    //获取url参数的值,比如GetQueryString("op") 返回 op参数值
+    function GetQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if( r != null )
+            return unescape(r[2]);
+        return null;
+    }
+
+    layui.use(['element','form','jquery'], function(){
+        var element = layui.element,
+            form = layui.form,
+            $ = layui.$;
+
+        //url 的get参数 op的值为0，则显示书写日记页面，1则显示所有日记页面，2则显示用户设置页面
+        var op = GetQueryString("op");
+        var cp = GetQueryString("cp");
+        var contentDom; //页面主体内容的节点
+        var num = null;
+        if(op == "0" || op == "" || op == null){
+            contentDom = document.getElementById("all-daily");
+            num = 0;
+        }else if(op == "1"){
+            contentDom = document.getElementById("write-daily");
+            num = 1;
+        }else if(op == "2"){
+            contentDom = document.getElementById("settings-content");
+            num = 2;
+        }else{
+            contentDom = document.createElement("h1");
+            contentDom.innerHTML = "404 not found!";
+            num = 3;
+        }
+        if(num != 3 && cp != "1"){ //将当前链接按钮的背景颜色切换成绿色
+            $(".layui-nav-tree li a")[num].setAttribute("class","layui-bg-green");
+        }
+        if(cp == "1"){
+            contentDom = document.getElementById("modify-password");
+        }
+
+        //使用append而非innerHTML 是为了避免前端渲染失败
+        $("#admin-content").append(contentDom);
+
+        form.on('select(avatar)',function(data){
+            var avatar_path = $(".div-select dl .layui-this").attr("lay-value");
+            $(".show-pic img").get(0).setAttribute("src",avatar_path);
+        });
+
+        form.render('select');
+        //监听 用户设置表单的提交
+        form.on('submit(form-information)', function(data){
+            layer.msg('保存成功!');
+            return true;
+        });
+
+        //监听 所有日记的crud操作表单的提交
+        form.on('submit(form-crud)',function(data){
+            var ids = [];
+            var url = '';
+            for(var i in data.field){
+                if(i != 'crud'){
+                    ids.push(parseInt(i));
+                }else{
+                    url = data.field[i];
+                }
+            }
+            if(url == '/admin/editDaily' && ids.length > 1){ //编辑日记
+                layer.msg('至多选择一篇日记进行编辑!');
+                setTimeout("window.location.href='/admin/index?op=0'",1000);
+            }else if(ids.length == 0){ //无选中记录的情况
+                layer.msg("没有选中的记录啊 Σ( ° △ °|||)");
+            }else{ //删除日记
+                $.ajax({
+                    url     :   url,
+                    type    :   'POST',
+                    data    :   {
+                        myIds:ids
+                    },
+                    dataType    :   'json',
+                    success :   function(data){
+                        // layer.msg('提交成功');
+                        layer.msg(data);
+                    },
+                    error   :   function(data){
+                        if(ids.length == 0){
+                            layer.msg("没有选中的记录啊 Σ( ° △ °|||)")
+                        }else{
+                            var temp_url = data.responseText;
+                            window.location.href = temp_url;
+                        }
+
+                    }
+                });
+            }
+            return false;
+        });
+
+        //监听 书写日记表单的提交
+        form.on('submit(form-daily)',function(data){
+            function p(s){
+                return s < 10 ? '0'+s : s;
+            }
+
+            var daily_time = document.getElementById("daily_time");
+            if(daily_time.getAttribute("value") == ''){
+                var now = new Date();
+                var time = now.getFullYear()+'-'+p(now.getMonth()+1)+'-'+p(now.getDate())+' '+p(now.getHours())+':'+p(now.getMinutes())+':'+p(now.getSeconds());
+                daily_time.setAttribute("value",time);
+            }
+            layer.msg("保存成功!");
+            return true;
+        });
+        //监听 用户设置表单的提交
+        form.on('submit(form-password)', function(data){
+            var input_pwd = document.getElementsByName("input_pwd")[0];
+            var old_pwd = document.getElementsByName("old_pwd")[0];
+            var new_pwd = document.getElementsByName("new_pwd")[0];
+            var new_pwd2 = document.getElementsByName("new_pwd2")[0];
+            if($("#input_pwd").val() != $("#old_pwd").val() ){
+                layer.msg("旧密码不正确！");
+                return false;
+            }
+            if($("#new_pwd").val() != $("#new_pwd2").val()){
+                layer.msg("两次密码不一致！");
+                return false;
+            }
+
+            layer.msg('发送成功~');
+            return true;
+        });
+
+    });
+
+    var path = "/markdown/lib/"; // markdown插件的lib库的静态资源路径
+    var testEditor;
+    //    调用编辑器
+    $(function() {
+        testEditor = editormd("daily-editormd", {
+            width   : "100%",
+            height  : 540,
+            syncScrolling : "single",
+            path    : path,
+            //为了能够提交表单，使用这个配置可以让构造出来的HTML代码直接在第二个隐藏的textarea域中，方便post提交表单。
+            saveHTMLToTextarea : true,
+
+            toolbar : false,
+            /**上传图片相关配置如下*/
+            imageUpload : false,
+            imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL : "/images/",//注意你后端的上传图片服务地址
+        });
+
+    });
+
+    var content = /*[[${daily==null?'':daily.getContent()}]]*/ 'Sebastian';
+    if(GetQueryString("aid") != null){
+        window.onload = function(){
+
+            testEditor.clear(); //清理所有文本
+            testEditor.insertValue(content); //添加文本
+
+        }
+    }
+
+    //]]>
+</script>
+</body>
+</html>

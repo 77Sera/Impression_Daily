@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>日记首页 - 印象日记</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/css/sera.css}"/>
+    <link rel="stylesheet" th:href="@{/markdown/css/editormd.min.css}"/>
+    <script th:src="@{/layui/layui.js}"></script>
+</head>
+<body>
+
+<div class="headband"></div>
+
+<div class="sera-content">
+    <div class="container">
+        <div class="layui-row">
+            <div class="layui-col-md3">
+                <div class="sidebar">
+                    <div class="site-logo layui-bg-black">
+                        <h3 class="layui-anim layui-anim-fadein"><a th:text="${user.getDailyname()== null?'我的日记':user.getDailyname()}" th:href="@{/index}" target="_self">Name of Daily</a></h3>
+                    </div>
+
+                    <div class="links">
+                        <ul class="layui-anim layui-anim-fadein">
+                            <li><a th:href="@{/index}"><i class="layui-icon layui-icon-home"></i><span>日记首页</span></a></li>
+                            <li><a th:href="@{/admin/index(op=1)}" target="_self"><i class="layui-icon layui-icon-edit"></i><span>书写日记</span></a></li>
+                            <li><a th:href="@{/admin/index}" target="_self"><i class="layui-icon layui-icon-component"></i><span>日记管理</span></a></li>
+                            <li><a th:href="@{/exit}"><i class="layui-icon layui-icon-return"></i><span>退出账户</span></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="author layui-anim layui-anim-upbit">
+                        <div class="author_avatar">
+                            <img th:src="${user.getAvatarpath()==null?'/images/default.png':user.getAvatarpath()}"/>
+                        </div>
+
+                        <div class="author_name">
+                            <p th:text="${user.getNickname() == null ? user.getUsername():user.getNickname()}">用户名称</p>
+                        </div>
+
+                        <div class="author_signature">
+                            <p th:text="${user.getSignature() == null ? '这个人很懒，什么都不想写':user.getSignature()}">代码的本质是逻辑，即大多数漏洞就是编写者逻辑上的漏洞。——阿里德温奇 · 王</p>
+                        </div>
+                    </div>
+
+                    <div class="site-archieves layui-anim layui-anim-up">
+                        <hr />
+                        <a th:href="@{/admin/index}" class="daily-state">
+                            <i class="layui-icon layui-icon-form"></i>
+                            <span>日记</span>
+                            <span class="daily-numbers" th:text="${dailys.size()}">0</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md8 layui-col-md-offset1">
+                <div class="right-side">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div style="display:none;">
+
+    <!-- 所有日记页的内容 -->
+    <div id="all-posts">
+        <ul th:if="${dailys.size()!=0}" class="layui-timeline right-side-ul layui-anim layui-anim-upbit">
+            <li th:each="dail,iterStat : ${dailys}" class="layui-timeline-item">
+                <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                <div class="layui-timeline-content layui-text">
+                    <a th:href="@{/index(id=${dail.getId()})}">
+                        <h2 th:text="${dail.getTitle()}" class="layui-timeline-title">日记标题</h2>
+                    </a>
+                    <p class="post-time">
+                        <i class="layui-icon layui-icon-tabs"> </i> 发表于 <span th:text="${dail.getTime()}">时间</span>
+                    </p><br/>
+                    <a th:href="@{/index(id=${dail.getId()})}"><button class="read-post-btn">查看日记 »</button></a>
+                </div>
+                <br/><hr/><br/>
+            </li>
+        </ul>
+        <div th:if="${dailys.size()==0}">
+            <img style="max-width:500px;" th:src="@{/images/404/4042.png}"/>
+            <hr/>
+            <h3>╥﹏╥...日记空空如也~</h3>
+            <br />
+            <a th:href="@{/admin/index(op=1)}"><button style="width:120px;" class="layui-btn" >去写日记</button></a>
+        </div>
+    </div>
+
+    <!-- 单个日记页的内容 -->
+    <div id="single-post">
+        <div th:if="${daily != null}" class="layui-anim layui-anim-upbit">
+            <a th:href="@{/index(id=${daily.getId()})}">
+                <h1 th:text="${daily.getTitle()}" class="layui-timeline-title">日记标题</h1>
+            </a>
+            <p class="post-time">
+                <i class="layui-icon layui-icon-tabs"> </i> 发表于 <span th:text="${daily.getTime()}">时间</span>
+            </p>
+            <div id="test-editormd-view">
+                <textarea style="display:none;" th:text="${daily.getHtmlcontent()}" name="test-editormd-markdown-doc"></textarea>
+            </div>
+            <!--<h2 th:text="${daily.getTitle()}">日记标题</h2><br/>
+            <h4>时间 : <span th:text=" ${daily.getTime()}">时间</span></h4><hr/><br/>
+            <div th:text="${daily.getContent()}">日记内容</div>-->
+        </div>
+    </div>
+
+</div>
+
+<script th:src="@{/markdown/jquery.min.js}"></script>
+<script th:src="@{/markdown/lib/marked.min.js}"></script>
+<script th:src="@{/markdown/lib/prettify.min.js}"></script>
+<script th:src="@{/markdown/lib/raphael.min.js}"></script>
+<script th:src="@{/markdown/lib/underscore.min.js}"></script>
+<script th:src="@{/markdown/lib/sequence-diagram.min.js}"></script>
+<script th:src="@{/markdown/lib/flowchart.min.js}"></script>
+<script th:src="@{/markdown/lib/jquery.flowchart.min.js}"></script>
+<script th:src="@{/markdown/editormd.js}"></script>
+<script type="text/javascript">
+    testEditormdView2 = editormd.markdownToHTML("test-editormd-view",{
+        htmlDecode : "style,script,iframe",
+        taskList    :true,
+        tex :true,
+        flowChart   : true,
+        sequenceDiagram :true,
+        });
+</script>
+<script>
+    //<![CDATA[
+    //获取url参数的值,比如GetQueryString("op") 返回 op参数值
+    function GetQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if( r != null )
+            return unescape(r[2]);
+        return null;
+    }
+
+    layui.use(['jquery'], function(){
+        var $ = layui.$;
+
+        //url 的get参数 如果有id参数，且不为null，则加载单个日记页面，否则显示所有日记
+        var id = GetQueryString("id");
+        var contentDom; //页面右侧主体内容的节点
+        var right_side = document.getElementsByClassName("right-side")[0];
+        if( id == "" || id == null){
+            contentDom = document.getElementById("all-posts"); //获取所有日记主体内容
+        }else{
+            contentDom = document.getElementById("single-post"); //获取单个日记页主体内容
+        }
+        //使用append而非innerHTML 是为了避免前端渲染失败
+        right_side.append(contentDom);
+
+    });
+    //]]>
+</script>
+</body>
+</html>
